@@ -14,7 +14,7 @@ from openpyxl.utils import get_column_letter
 import glob  # Import glob for file pattern matching
 
 # --- Configuration ---
-_chunk_size = 5                                                                     # Save every 10,000 samples
+_chunk_size = 6                                                                     # Save every 10,000 samples
 _delete_chunks_after_merge = True  # Set to False to keep intermediate chunk files
 select_sampling = False
 # --- Global State (Protected by Lock) ---
@@ -308,10 +308,15 @@ def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
         _save_chunk(epoch, start_index, end_index, _buffer)
         _buffer = []
         _samples_in_buffer = 0
-        if (current_log_index == sample_per_epoch or
-                current_log_index == mysettings.top_selected_samples):
+        if (current_log_index == sample_per_epoch or current_log_index == mysettings.top_selected_samples):
+            if _samples_in_buffer > 0:
+                start_index = current_log_index - _samples_in_buffer + 1  # Define here
+                end_index = current_log_index  # Define here
+                _save_chunk(epoch, start_index, end_index, _buffer)
+            _buffer = []
+            _samples_in_buffer = 0
             _merge_chunks(epoch, _total_samples_logged_this_epoch)
-        _cleanup_chunk_files()
+            _cleanup_chunk_files()
         # if _samples_in_buffer >= _chunk_size or _samples_in_buffer >= mysettings.top_selected_samples:
         #     start_index = current_log_index - _samples_in_buffer + 1
         #     end_index = current_log_index
