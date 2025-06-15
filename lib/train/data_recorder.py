@@ -304,13 +304,23 @@ def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
         # Save chunk if buffer is full or if this is the last chunk
         if _samples_in_buffer >= _chunk_size or _samples_in_buffer >= mysettings.top_selected_samples:
             start_index = current_log_index - _samples_in_buffer + 1
-            end_index = current_log_index
-            _save_chunk(epoch, start_index, end_index, _buffer)
-            if(end_index ==sample_per_epoch  or end_index == mysettings.top_selected_samples ):
-                _merge_chunks(epoch, _total_samples_logged_this_epoch)
-                _cleanup_chunk_files()
-            _buffer = []
-            _samples_in_buffer = 0
+        end_index = current_log_index
+        _save_chunk(epoch, start_index, end_index, _buffer)
+        _buffer = []
+        _samples_in_buffer = 0
+        if (current_log_index == sample_per_epoch or
+                current_log_index == mysettings.top_selected_samples):
+            _merge_chunks(epoch, _total_samples_logged_this_epoch)
+        _cleanup_chunk_files()
+        # if _samples_in_buffer >= _chunk_size or _samples_in_buffer >= mysettings.top_selected_samples:
+        #     start_index = current_log_index - _samples_in_buffer + 1
+        #     end_index = current_log_index
+        #     _save_chunk(epoch, start_index, end_index, _buffer)
+        #     if(end_index ==sample_per_epoch  or end_index == mysettings.top_selected_samples ):
+        #         _merge_chunks(epoch, _total_samples_logged_this_epoch)
+        #         _cleanup_chunk_files()
+        #     _buffer = []
+        #     _samples_in_buffer = 0
 
 def save_gradients(model, sample_index, epoch, output_dir='gradients'):
     """
