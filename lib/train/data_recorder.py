@@ -244,7 +244,7 @@ def set_epoch( settings):
     global current_epoch, _buffer, _samples_in_buffer, _chunk_files, _total_samples_logged_this_epoch,sample_per_epoch,selected_sampling_epoch,mysettings
 
     with _file_lock:
-        # Clean up previous experiments if this is the first epoch rwerwe
+        # Clean up previous experiments if this is the first epoch pppp
         if settings.epoch == 1 or current_epoch is None:
             sample_per_epoch = settings.sample_per_epoch
             _clean_previous_experiments()
