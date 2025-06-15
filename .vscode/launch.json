@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Remote Attach",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "comp015",
+                "port": 3000
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/cluster/users/hlwn032u1/data/seq"
+                }
+            ],
+            "justMyCode": false
+        }
+    ]
+}
+
+
+// {
+//     "version": "0.2.0",
+//     "configurations": [
+//         {
+//             "name": "Python: Debug SeqTrack Training",
+//             "type": "debugpy",
+//             "request": "launch",
+//             "module": "torch.distributed.launch",
+//             "args": [
+//                 "--nproc_per_node=1",
+//                 "lib/train/run_training.py",
+//                 "--script", "seqtrack",
+//                 "--config", "seqtrack_b256",
+//                 "--save_dir", "."
+//             ],
+//             "console": "integratedTerminal",
+//             "justMyCode": false
+//         }
+//     ]
+// }

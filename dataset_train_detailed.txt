@@ -1,0 +1,143 @@
+=== Properties ===
+
+Attribute: _is_protocol
+Type: <class 'bool'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: _sample_visible_ids
+Type: <class 'method'>
+Is Method: Yes
+Documentation:
+ Samples num_ids frames between min_id and max_id for which target is visible
+
+        args:
+            visible - 1d Tensor indicating whether target is visible for each frame
+            num_ids - number of frames to be samples
+            min_id - Minimum allowed frame number
+            max_id - Maximum allowed frame number
+
+        returns:
+            list - List of sampled frame numbers. None if not sufficient visible frames could be found.
+        
+--------------------------------------------------
+
+Attribute: datasets
+Type: <class 'list'>
+Is Method: No
+Length: 1
+--------------------------------------------------
+
+Attribute: frame_sample_mode
+Type: <class 'str'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: get_center_box
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: get_frame_ids_order
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: get_frame_ids_stark
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: get_frame_ids_trident
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: get_one_search
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: getitem
+Type: <class 'method'>
+Is Method: Yes
+Documentation:
+
+        returns:
+            TensorDict - dict containing all the data blocks
+        
+--------------------------------------------------
+
+Attribute: getitem_cls
+Type: <class 'method'>
+Is Method: Yes
+Documentation:
+
+        args:
+            index (int): Index (Ignored since we sample randomly)
+            aux (bool): whether the current data is for auxiliary use (e.g. copy-and-paste)
+
+        returns:
+            TensorDict - dict containing all the data blocks
+        
+--------------------------------------------------
+
+Attribute: max_gap
+Type: <class 'int'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: num_search_frames
+Type: <class 'int'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: num_template_frames
+Type: <class 'int'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: p_datasets
+Type: <class 'list'>
+Is Method: No
+Length: 1
+--------------------------------------------------
+
+Attribute: pos_prob
+Type: <class 'float'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: processing
+Type: <class 'lib.train.data.processing.SeqTrackProcessing'>
+Is Method: Yes
+Documentation:
+ The processing class used for training SeqTrack. The images are processed in the following way.
+    First, the target bounding box is jittered by adding some noise. Next, a square region (called search region )
+    centered at the jittered target center, and of area search_area_factor^2 times the area of the jittered box is
+    cropped from the image. The reason for jittering the target box is to avoid learning the bias that the target is
+    always at the center of the search region. The search region is then resized to a fixed size given by the
+    argument output_sz.
+
+    
+--------------------------------------------------
+
+Attribute: sample_seq_from_dataset
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: samples_per_epoch
+Type: <class 'int'>
+Is Method: No
+--------------------------------------------------
+
+Attribute: show
+Type: <class 'method'>
+Is Method: Yes
+--------------------------------------------------
+
+Attribute: train_cls
+Type: <class 'bool'>
+Is Method: No
+--------------------------------------------------

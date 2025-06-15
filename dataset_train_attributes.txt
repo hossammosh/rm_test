@@ -1,0 +1,63 @@
+Attribute: _is_protocol
+Type: <class 'bool'>
+--------------------------------------------------
+Attribute: _sample_visible_ids
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: datasets
+Type: <class 'list'>
+--------------------------------------------------
+Attribute: frame_sample_mode
+Type: <class 'str'>
+--------------------------------------------------
+Attribute: get_center_box
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: get_frame_ids_order
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: get_frame_ids_stark
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: get_frame_ids_trident
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: get_one_search
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: getitem
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: getitem_cls
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: max_gap
+Type: <class 'int'>
+--------------------------------------------------
+Attribute: num_search_frames
+Type: <class 'int'>
+--------------------------------------------------
+Attribute: num_template_frames
+Type: <class 'int'>
+--------------------------------------------------
+Attribute: p_datasets
+Type: <class 'list'>
+--------------------------------------------------
+Attribute: pos_prob
+Type: <class 'float'>
+--------------------------------------------------
+Attribute: processing
+Type: <class 'lib.train.data.processing.SeqTrackProcessing'>
+--------------------------------------------------
+Attribute: sample_seq_from_dataset
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: samples_per_epoch
+Type: <class 'int'>
+--------------------------------------------------
+Attribute: show
+Type: <class 'method'>
+--------------------------------------------------
+Attribute: train_cls
+Type: <class 'bool'>
+--------------------------------------------------
