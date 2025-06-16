@@ -14,7 +14,7 @@ from openpyxl.utils import get_column_letter
 import glob  # Import glob for file pattern matching
 
 # --- Configuration ---
-_chunk_size = 6                                                                     # Save every 10,000 samples
+_chunk_size = 5                                                                     # Save every 10,000 samples
 _delete_chunks_after_merge = True  # Set to False to keep intermediate chunk files
 select_sampling = False
 # --- Global State (Protected by Lock) ---
@@ -101,20 +101,20 @@ def _format_excel_file(filename):
         ws.row_dimensions[1].height = 25
         wb.save(filename)
     except ImportError:
-        print("Warning: openpyxl not found. Cannot apply Excel formatting.")
+        print("Warning: openpyxl not found. Cannot apply Excel formatting.",flush=True)
     except Exception as e:
-        print(f"Error formatting Excel file {filename}: {e}")
+        print(f"Error formatting Excel file {filename}: {e}",flush=True)
 
 # --- Core Logic ---
 def _save_chunk(epoch, start_index, end_index, data_to_save):
     """Saves the current buffer to a chunk file."""
     global _chunk_files
     if not data_to_save:
-        print("No data in buffer to save as chunk.")
+        print("No data in buffer to save as chunk.",flush=True)
         return
 
     filename = _get_chunk_filename(epoch, start_index, end_index)
-    print(f"Saving chunk {start_index}-{end_index} for epoch {epoch} to {filename}...")
+    print(f"Saving chunk {start_index}-{end_index} for epoch {epoch} to {filename}...",flush=True)
     try:
         df = pd.DataFrame(data_to_save)
         # Ensure columns are in the correct order
@@ -125,9 +125,8 @@ def _save_chunk(epoch, start_index, end_index, data_to_save):
         # Apply formatting after saving
         _format_excel_file(filename)
         _chunk_files.append(filename)
-        #print(f"Successfully saved and formatted chunk: {filename}")
     except Exception as e:
-        print(f"Error saving chunk {filename}: {e}")
+        print(f"Error saving chunk {filename}: {e}",flush=True)
 
 def _clean_previous_experiments():
     """
@@ -135,7 +134,7 @@ def _clean_previous_experiments():
     This is called at the start of the first epoch.
     """
     global select_sampling
-    print("Cleaning up previous experiment files...")
+    print("Cleaning up previous experiment files...",flush=True)
 
     # Define file patterns to search for
     chunk_pattern = "sample_stats_epoch_*_all*_chunk_sample_*.xlsx"
@@ -146,27 +145,27 @@ def _clean_previous_experiments():
 
     # Print the list of existing files
     if existing_files:
-        print("\nFound the following log files:")
+        print("\nFound the following log files:",flush=True)
         for i, f in enumerate(existing_files, 1):
-            print(f"  {i}. {os.path.basename(f)}")
-        print(f"\nTotal files found: {len(existing_files)}")
+            print(f"  {i}. {os.path.basename(f)}",flush=True)
+        print(f"\nTotal files found: {len(existing_files)}",flush=True)
 
         # Delete all found files if not in select_sampling mode
         if not select_sampling:
-            print("\nDeleting Excel files...")
+            print("\nDeleting Excel files...",flush=True)
             deleted_count = 0
             for f in existing_files:
                 try:
                     os.remove(f)
-                    print(f"  - Deleted: {os.path.basename(f)}")
+                    print(f"  - Deleted: {os.path.basename(f)}",flush=True)
                     deleted_count += 1
                 except OSError as e:
-                    print(f"  - Error deleting {os.path.basename(f)}: {e}")
-            print(f"\nDeletion complete. Total files deleted: {deleted_count}")
+                    print(f"  - Error deleting {os.path.basename(f)}: {e}",flush=True)
+            print(f"\nDeletion complete. Total files deleted: {deleted_count}",flush=True)
         else:
-            print("\nSelected Sampling is ENABLED. Existing log files will be PRESERVED.")
+            print("\nSelected Sampling is ENABLED. Existing log files will be PRESERVED.",flush=True)
     else:
-        print("\nNo existing log files found.")
+        print("\nNo existing log files found.",flush=True)
 def _merge_chunks(epoch, total_samples):
     """
     Merges all chunk files for the current epoch into a single file.
@@ -178,10 +177,10 @@ def _merge_chunks(epoch, total_samples):
     global _chunk_files
 
     if not _chunk_files:
-        print("No chunk files to merge.")
+        print("No chunk files to merge.",flush=True)
         return
 
-    print(f"Merging {len(_chunk_files)} chunk files for epoch {epoch}...")
+    print(f"Merging {len(_chunk_files)} chunk files for epoch {epoch}...",flush=True)
     all_data_frames = []
 
     for chunk_file in _chunk_files:
@@ -189,10 +188,10 @@ def _merge_chunks(epoch, total_samples):
             df = pd.read_excel(chunk_file, engine='openpyxl')
             all_data_frames.append(df)
         except Exception as e:
-            print(f"Error reading chunk file {chunk_file}: {e}. Skipping this chunk.")
+            print(f"Error reading chunk file {chunk_file}: {e}. Skipping this chunk.",flush=True)
 
     if not all_data_frames:
-        print("Error: No valid data found in chunk files. Cannot merge.")
+        print("Error: No valid data found in chunk files. Cannot merge.",flush=True)
         return
 
     # Concatenate all dataframes
@@ -204,9 +203,9 @@ def _merge_chunks(epoch, total_samples):
     try:
         final_df.to_excel(final_filename, index=False, engine='openpyxl')
         _format_excel_file(final_filename)
-        print(f"Successfully merged chunks into final file: {final_filename}")
+        print(f"Successfully merged chunks into final file: {final_filename}",flush=True)
     except Exception as e:
-        print(f"Error saving final merged file: {e}")
+        print(f"Error saving final merged file: {e}",flush=True)
 
 
 def _cleanup_chunk_files():
@@ -216,7 +215,7 @@ def _cleanup_chunk_files():
     if not _chunk_files:
         return
 
-    print("Cleaning up chunk files...")
+    print("Cleaning up chunk files...",flush=True)
     deleted_count = 0
     for chunk_file in _chunk_files:
         try:
@@ -224,16 +223,16 @@ def _cleanup_chunk_files():
                 os.remove(chunk_file)
                 deleted_count += 1
         except Exception as e:
-            print(f"Error removing chunk file {chunk_file}: {e}")
+            print(f"Error removing chunk file {chunk_file}: {e}",flush=True)
 
-    print(f"Removed {deleted_count} chunk files.")
+    print(f"Removed {deleted_count} chunk files.",flush=True)
     _chunk_files = []
 
 
 def set_sampling(ss):
     global select_sampling
     select_sampling = ss
-    print(f"Selected sampling mode set to: {select_sampling}")
+    print(f"Selected sampling mode set to: {select_sampling}",flush=True)
 
 
 def set_epoch( settings):
@@ -249,15 +248,13 @@ def set_epoch( settings):
             sample_per_epoch = settings.sample_per_epoch
             _clean_previous_experiments()
 
-        print(f"Setting data recorder for epoch {settings.epoch}. Clearing state.")
+        print(f"Setting data recorder for epoch {settings.epoch}. Clearing state.",flush=True)
         current_epoch = settings.epoch
         _buffer = []
         _samples_in_buffer = 0
         _chunk_files = []
         _total_samples_logged_this_epoch = 0
         mysettings = settings
-        #selected_sampling_epoch=settings.selected_sampling_epoch
-
 
 def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
     """
@@ -273,7 +270,7 @@ def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
     # Determine epoch (should be set by trainer via set_epoch or passed in data_info)
     epoch = current_epoch
     if epoch is None:
-        print("Error: Epoch not set in data_recorder. Cannot log data. Call set_epoch() first.")
+        print("Error: Epoch not set in data_recorder. Cannot log data. Call set_epoch() first.",flush=True)
         return
 
     with _file_lock:
@@ -304,14 +301,16 @@ def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
         # Save chunk if buffer is full or if this is the last chunk
         if _samples_in_buffer >= _chunk_size or _samples_in_buffer >= mysettings.top_selected_samples:
             start_index = current_log_index - _samples_in_buffer + 1
-        end_index = current_log_index
-        _save_chunk(epoch, start_index, end_index, _buffer)
-        _buffer = []
-        _samples_in_buffer = 0
-        if (current_log_index == sample_per_epoch or current_log_index == mysettings.top_selected_samples):
+            end_index = current_log_index
+            _save_chunk(epoch, start_index, end_index, _buffer)
+            _buffer = []
+            _samples_in_buffer = 0
+
+            # Merge and finalize if this is the last sample
+        if current_log_index == sample_per_epoch or current_log_index == mysettings.top_selected_samples:
             if _samples_in_buffer > 0:
-                start_index = current_log_index - _samples_in_buffer + 1  # Define here
-                end_index = current_log_index  # Define here
+                start_index = current_log_index - _samples_in_buffer + 1
+                end_index = current_log_index
                 _save_chunk(epoch, start_index, end_index, _buffer)
             _buffer = []
             _samples_in_buffer = 0

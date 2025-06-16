@@ -34,15 +34,8 @@ class LTRTrainer(BaseTrainer):
             self.tensorboard_writer = TensorboardWriter(tensorboard_writer_dir, [l.name for l in loaders])
 
         # ----- Modification Start: Define and Create Checkpoint Directory -----
-        print("--- Modifying ltr_trainer: Defining checkpoint directory ---")
-        self.checkpoint_dir = os.path.join(self.settings.env.workspace_dir, self.settings.project_path, "checkpoints")
-        if self.settings.local_rank in [-1, 0]:  # Only main process creates directory
-            if not os.path.exists(self.checkpoint_dir):
-                os.makedirs(self.checkpoint_dir)
-                print(f"--- ltr_trainer: Created checkpoint directory at: {self.checkpoint_dir} ---")
-            else:
-                print(f"--- ltr_trainer: Checkpoint directory already exists at: {self.checkpoint_dir} ---")
-        # ----- Modification End: Define and Create Checkpoint Directory -----
+        print("--- Modifying ltr_trainer: Defining checkpoint directory ---",flush=True)
+
 
         self.move_data_to_gpu = getattr(settings, 'move_data_to_gpu', True)
         self.settings = settings
@@ -55,7 +48,7 @@ class LTRTrainer(BaseTrainer):
         #data_recorder.set_sampling(settings.selected_sampling)
     def cycle_dataset(self, loader):
         """Do a cycle of training or validation."""
-        print('start training...')
+        print('start training...',flush=True)
         self.actor.train(loader.training)
         torch.set_grad_enabled(loader.training)
         self._init_timing()
@@ -83,7 +76,7 @@ class LTRTrainer(BaseTrainer):
             try:
                 data_recorder.samples_stats_save(sample_index=sample_index,data_info=data_info,stats=stats)
             except Exception as e:
-                print(f"Error saving sample statistics: {e}")
+                print(f"Error saving sample statistics: {e}",flush=True)
 
             # Backward pass and parameter updates (only if not in stats saving mode)
             if loader.training : #and not save_stats_permission
@@ -258,7 +251,7 @@ class LTRTrainer(BaseTrainer):
             else:
                 full_line = progress_info
 
-            print(full_line)
+            print(full_line,flush=True)
 
             # Log to file
             log_str = full_line + '\n'
@@ -272,16 +265,12 @@ class LTRTrainer(BaseTrainer):
                         with open(log_file_path, 'a') as f:
                             f.write(log_str)
                     except Exception as e:
-                        print(f"Error writing to log file {log_file_path}: {e}")
+                        print(f"Error writing to log file {log_file_path}: {e}",flush=True)
                 else:
-                    print("Log file path not configured in settings.")
+                    print("Log file path not configured in settings.",flush=True)
     # Save checkpoint only for the first 10 epochs as requested for the initial stage
     def _write_tensorboard(self):
         if self.settings.epoch == 1:
             self.tensorboard_writer.write_info(self.settings.script_name, self.settings.description)
         self.tensorboard_writer.write_epoch(self.stats, self.settings.epoch)
-        if self.settings.epoch <= 10:
-            checkpoint_path = os.path.join(self.checkpoint_dir, f"checkpoint_epoch_{self.settings.epoch}.pt")
-            torch.save(self.actor.net.state_dict(), checkpoint_path)
-            print(f"--- ltr_trainer: Successfully saved checkpoint for epoch {self.settings.epoch} to {checkpoint_path} ---")
-    # ----- Modification End: Save Checkpoint Conditionally -----
+

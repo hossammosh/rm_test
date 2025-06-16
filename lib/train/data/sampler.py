@@ -62,7 +62,7 @@ class TrackingSampler(torch.utils.data.Dataset):
             self.excel_data = pd.read_excel(excel_filename)
             self.excel_data.sort_values(by=['stats/Loss_total', 'stats_IoU'], ascending=[False, True], inplace=True)
             self.excel_data = self.excel_data.iloc[:self.settings.top_selected_samples]
-            print(f"Loaded Excel file: {excel_filename} with {len(self.excel_data)} top_selected_samples")
+            print(f"Loaded Excel file: {excel_filename} with {len(self.excel_data)} top_selected_samples",flush=True)
 
     def _sample_visible_ids(self, visible, num_ids=1, min_id=None, max_id=None,
                             allow_invisible=False, force_invisible=False):
