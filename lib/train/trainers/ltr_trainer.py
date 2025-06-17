@@ -52,9 +52,6 @@ class LTRTrainer(BaseTrainer):
         self.actor.train(loader.training)
         torch.set_grad_enabled(loader.training)
         self._init_timing()
-        # Ensure sampling mode is properly set at the start of each epoch
-        # data_recorder.set_sampling(self.settings.selected_sampling)
-        # data_recorder.set_epoch(self.settings.epoch,settings=self.settings)
         self.last_time_print = time.time()
         # Initialize timing
         self.iteration_counter = 0
