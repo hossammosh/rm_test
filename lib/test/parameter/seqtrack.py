@@ -21,8 +21,9 @@ def parameters(yaml_name: str):
     params.search_factor = cfg.TEST.SEARCH_FACTOR
     params.search_size = cfg.TEST.SEARCH_SIZE
 
-    # Network checkpoint path
-    params.checkpoint = os.path.join(save_dir, "checkpoints/train/seqtrack/%s/SEQTRACK_ep%04d.pth.tar" %
+    # Network checkpoint path - updated to use the correct base directory
+    checkpoint_dir = os.path.join(prj_dir, 'checkpoints')
+    params.checkpoint = os.path.join(checkpoint_dir, "train/seqtrack/%s/SEQTRACK_ep%04d.pth.tar" %
                                      (yaml_name, cfg.TEST.EPOCH))
 
     # whether to save boxes from all queries

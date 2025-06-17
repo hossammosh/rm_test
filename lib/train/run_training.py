@@ -1,4 +1,4 @@
-import os  #1
+import os
 import argparse
 import importlib
 import cv2 as cv
@@ -29,7 +29,6 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
     """
 
     # Manually call this when you're done
-    #save_log()
     if save_dir is None:
         print("save_dir dir is not given. Use the default dir instead.")
     # This is needed to avoid strange crashes related to opencv
@@ -56,7 +55,6 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
     settings.cfg_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, config_name))
     expr_module = importlib.import_module('lib.train.train_script')
     expr_func = getattr(expr_module, 'run')
-    #this is rm2
     expr_func(settings)
 
 
