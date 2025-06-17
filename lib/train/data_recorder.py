@@ -299,8 +299,7 @@ def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
         _samples_in_buffer += 1
 
         # Save chunk if buffer is full or if this is the last chunk
-        if _samples_in_buffer >= _chunk_size or \
-           (mysettings.selected_sampling and _samples_in_buffer >= mysettings.top_selected_samples):
+        if _samples_in_buffer >= _chunk_size or _samples_in_buffer >= mysettings.top_selected_samples:
             start_index = current_log_index - _samples_in_buffer + 1
             end_index = current_log_index
             _save_chunk(epoch, start_index, end_index, _buffer)
@@ -308,8 +307,7 @@ def samples_stats_save(sample_index: int, data_info: dict, stats: dict):
             _samples_in_buffer = 0
 
             # Merge and finalize if this is the last sample
-        if current_log_index == sample_per_epoch or \
-           (mysettings.selected_sampling and current_log_index == mysettings.top_selected_samples):
+        if current_log_index == sample_per_epoch or current_log_index == mysettings.top_selected_samples:
             if _samples_in_buffer > 0:
                 start_index = current_log_index - _samples_in_buffer + 1
                 end_index = current_log_index
