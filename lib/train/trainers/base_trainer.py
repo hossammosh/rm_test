@@ -86,7 +86,6 @@ class BaseTrainer:
                     data_recorder.set_epoch(settings=self.settings)
 
                     if (self.settings.selected_sampling and epoch >= self.settings.selected_sampling_epoch):
-                        self.settings.top_sample_ratio = .3
                         self.settings.top_selected_samples = int(
                         self.settings.top_sample_ratio * len(self.loaders[0].dataset))
                         self.loaders[0].dataset.load_selected_samples()
