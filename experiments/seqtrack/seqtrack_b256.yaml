@@ -32,7 +32,6 @@ DATA:
 #    - 1
 #    - 1
     SAMPLE_PER_EPOCH: 20                     # Number of training samples per epoch
-    ALL_SAMPLES_DATA_INFO: []
 MODEL:
   ENCODER:
     TYPE: vit_base_patch16
@@ -58,7 +57,7 @@ TRAIN:
   WEIGHT_DECAY: 0.0001
   ss_print_interval: 10
   checkpoint_save_interval: 1               # Number of epochs between checkpoints
-  selected_sampling: true                   # Whether to use selected sampling
+  selected_sampling: false                   # Whether to use selected sampling
   selected_sampling_epoch: 3
   top_sample_ratio: .3
   top_selected_samples: 2

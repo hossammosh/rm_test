@@ -56,7 +56,7 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
     settings.cfg_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, config_name))
     expr_module = importlib.import_module('lib.train.train_script')
     expr_func = getattr(expr_module, 'run')
-
+    #this is rm2
     expr_func(settings)
 
 
