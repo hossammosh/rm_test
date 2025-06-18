@@ -1,11 +1,15 @@
 import importlib
 import os
+import sys
 from collections import OrderedDict
 from lib.test.evaluation.environment import env_settings
 import time
-import cv2 as cv
-import sys
 
+# Add the external/AR directory to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../external/AR'))
+from pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
+
+import cv2 as cv
 from lib.utils.lmdb_utils import decode_img
 from pathlib import Path
 import numpy as np
@@ -285,6 +289,3 @@ class Tracker:
             return decode_img(image_file[0], image_file[1])
         else:
             raise ValueError("type of image_file should be str or list")
-
-
-

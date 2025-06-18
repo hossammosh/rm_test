@@ -47,8 +47,8 @@ class SEQTRACK(BaseTracker):
 
 
     def initialize(self, image, info: dict):
-
         # get the initial templates
+
         z_patch_arr, _ = sample_target(image, info['init_bbox'], self.params.template_factor,
                                        output_sz=self.params.template_size)
 
@@ -58,6 +58,18 @@ class SEQTRACK(BaseTracker):
         # get the initial sequence i.e., [start]
         batch = template.shape[0]
         self.init_seq = (torch.ones([batch, 1]).to(template) * self.start).type(dtype=torch.int64)
+        # What to Expect:
+        #
+        #     z_patch_arr: Cropped template image (e.g., 128x128x3)
+        #     template: Preprocessed tensor (1x3x128x128)
+        #     self.init_seq: Start token tensor [[4001]] (bins+1)
+        #     self.template_list: List containing initial template
+        #
+        # Verification:
+        #
+        #     Check template dimensions match config
+        #     Verify start token value equals self.bins + 1
+        #     Confirm self.state contains initial bbox [x,y,w,h]
 
         self.state = info['init_bbox']
         self.frame_id = 0
@@ -69,12 +81,34 @@ class SEQTRACK(BaseTracker):
                                                    output_sz=self.params.search_size)  # (x1, y1, w, h)
         search = self.preprocessor.process(x_patch_arr)
         images_list = self.template_list + [search]
+        # What to Expect:
+        #
+        #     x_patch_arr: Search region crop (e.g., 256x256x3)
+        #     resize_factor: Scale factor for coordinate mapping (e.g., 2.0)
+        #     search: Preprocessed search tensor (1x3x256x256)
+        #     images_list: Combined templates + search (e.g., length 2)
+        #
+        # Verification:
+        #
+        #     Search region centered on previous prediction
+        #     Resize factor > 1 indicates upsampling
+        #     Image list contains all templates plus current search
 
-        # run the encoder
+
         with torch.no_grad():
             xz = self.network.forward_encoder(images_list)
-
-        # run the decoder
+        # run the encoder
+        # What to Expect:
+        #
+        #     xz: List of encoded features from different layers
+        #     xz[-1]: Final layer features (1x(N_template + N_search)xD)
+        #     Feature dimensions: e.g., (1, 320, 768) for templates(64) + search(256) patches
+        #
+        # Verification:
+        #
+        #     Check feature dimensions match expected patch counts
+        #     Verify no gradient computation (inference mode)
+        #     Ensure all templates and search are processed jointly
         with torch.no_grad():
             out_dict = self.network.inference_decoder(xz=xz,
                                                       sequence=self.init_seq,
@@ -82,6 +116,18 @@ class SEQTRACK(BaseTracker):
                                                       seq_format=self.seq_format)
 
         pred_boxes = out_dict['pred_boxes'].view(-1, 4)
+        # run the decoder
+        # What to Expect:
+        #
+        #     out_dict['pred_boxes']: Generated coordinates (1x4) in [0, bins-1] range
+        #     out_dict['confidence']: Sequence generation confidence scores
+        #     pred_boxes: Normalized predictions ready for mapping
+        #
+        # Verification:
+        #
+        #     Coordinates should be in valid range [0, bins-1]
+        #     Confidence scores indicate generation quality
+        #     Shape matches expected (batch_size, 4)
 
         # if use other formats of sequence
         if self.seq_format == 'corner':
@@ -94,6 +140,17 @@ class SEQTRACK(BaseTracker):
 
         # get the final box result
         self.state = clip_box(self.map_box_back(pred_box, resize_factor), H, W, margin=10)
+        # What to Expect:
+        #
+        #     pred_boxes: Normalized to [0,1] range
+        #     pred_box: Scaled to search region coordinates
+        #     self.state: Final bbox in image coordinates [x,y,w,h]
+        #
+        # Verification:
+        #
+        #     Coordinates properly mapped from bins to pixels
+        #     Bounding box within image boundaries
+        #     State update reflects current frame prediction
 
         # update the template
         if self.num_template > 1:
@@ -105,6 +162,17 @@ class SEQTRACK(BaseTracker):
                 self.template_list.append(template)
                 if len(self.template_list) > self.num_template:
                     self.template_list.pop(1)
+            # What to Expect:
+            #
+            #     conf_score: Tracking confidence (higher = better)
+            #     Template update triggered by interval + confidence threshold
+            #     self.template_list: Updated with new template, maintaining size limit
+            #
+            # Verification:
+            #
+            #     Update only occurs when both conditions met
+            #     First template (index 0) is never removed
+            #     Template list size doesn't exceed self.num_template
 
         # for debug
         if self.debug == 1:
