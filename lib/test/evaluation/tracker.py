@@ -1,13 +1,36 @@
+# import importlib
+# import os
+# from collections import OrderedDict
+# from lib.test.evaluation.environment import env_settings
+# import time
+# import cv2 as cv
+# import sys
+#
+# from lib.utils.lmdb_utils import decode_img
+# from pathlib import Path
+# import numpy as np
+
 import importlib
 import os
+import sys
+from pathlib import Path
+
+# Add the external/AR directory to Python path
+project_root = Path(__file__).parent.parent.parent.parent.absolute()
+sys.path.append(str(project_root))
+
+# Import MultiObjectWrapper directly from its file
+multi_obj_wrapper_path = Path('external/AR/pytracking/evaluation/multi_object_wrapper.py')
+spec = importlib.util.spec_from_file_location('multi_object_wrapper', multi_obj_wrapper_path)
+multi_obj_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(multi_obj_module)
+MultiObjectWrapper = multi_obj_module.MultiObjectWrapper
+
 from collections import OrderedDict
 from lib.test.evaluation.environment import env_settings
 import time
 import cv2 as cv
-import sys
-from pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
 from lib.utils.lmdb_utils import decode_img
-from pathlib import Path
 import numpy as np
 
 
