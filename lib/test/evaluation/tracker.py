@@ -1,15 +1,11 @@
 import importlib
 import os
-import sys
 from collections import OrderedDict
 from lib.test.evaluation.environment import env_settings
 import time
-
-# Add the external/AR directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../external/AR'))
-from pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
-
 import cv2 as cv
+import sys
+from pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
 from lib.utils.lmdb_utils import decode_img
 from pathlib import Path
 import numpy as np
